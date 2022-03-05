@@ -9,9 +9,13 @@ import {
 } from "@chakra-ui/react"
 import { Field, Form, Formik } from "formik"
 import { useRouter } from "next/router"
+import { useContext } from "react"
+import { UserContext } from "../context/UserContext"
+import jwt from "jsonwebtoken"
 
 export default function Home() {
   const router = useRouter()
+  const { setToken } = useContext(UserContext)
 
   return (
     <Box>
@@ -33,7 +37,9 @@ export default function Home() {
             }),
           })
           const data = await res.json()
-          console.log(data)
+          setToken(data.token)
+          const { username } = jwt.decode(data.token)
+          router.push(`/${username}`)
         }}
       >
         {({ isSubmitting }) => (
