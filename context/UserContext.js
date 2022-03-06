@@ -8,10 +8,17 @@ export const UserProvider = ({ children }) => {
   const [token, setToken] = useState(null)
 
   useEffect(() => {
+    const getUser = async () => {
+      const res = await fetch(`/api/${jwt.decode(token).username}`)
+      const data = await res.json()
+      console.log(data.user)
+      setUser(data.user)
+    }
+
     if (!token) {
       return
     } else {
-      setUser(jwt.decode(token))
+      getUser()
     }
   }, [token])
 

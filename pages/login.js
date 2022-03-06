@@ -51,7 +51,7 @@ export default function Home() {
                 >
                   <FormLabel htmlFor="username">Username</FormLabel>
                   <Input {...field} id="username" placeholder="username" />
-                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  <FormErrorMessage>{form.errors.username}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
@@ -67,7 +67,7 @@ export default function Home() {
                     placeholder="password"
                     type="password"
                   />
-                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>

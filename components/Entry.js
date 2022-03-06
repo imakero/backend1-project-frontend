@@ -6,7 +6,6 @@ const Entry = ({ entry, user }) => {
   const src = profileImageUrl ? profileImageUrl : undefined
   const displayName = name || username
 
-  console.log(entry, user)
   return (
     <HStack
       spacing={2}
