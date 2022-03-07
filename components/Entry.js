@@ -1,5 +1,14 @@
-import { Avatar, Box, Heading, HStack, Text, VStack } from "@chakra-ui/react"
+import {
+  Avatar,
+  Box,
+  Heading,
+  HStack,
+  Link,
+  Text,
+  VStack,
+} from "@chakra-ui/react"
 import { formatDate } from "../lib/utils"
+import NextLink from "next/link"
 
 const Entry = ({ entry, user }) => {
   const { profileImageUrl, username, name } = user
@@ -10,17 +19,28 @@ const Entry = ({ entry, user }) => {
     <HStack
       spacing={2}
       align="start"
-      maxWidth={400}
+      width="100%"
+      maxWidth={500}
       p={4}
       border="1px solid #e3e3e3"
       margin="-1px"
     >
-      <Avatar size="md" name={displayName} src={src}></Avatar>
+      <NextLink href={`/${username}`} passHref>
+        <Link>
+          <Avatar size="md" name={displayName} src={src}></Avatar>
+        </Link>
+      </NextLink>
+
       <VStack spacing={2} align="start">
         <HStack spacing={1}>
-          <Heading size="md" pr={0}>
-            {user.name}
-          </Heading>
+          <NextLink href={`/${username}`} passHref>
+            <Link>
+              <Heading size="md" pr={0} isTruncated>
+                {user.name || user.username}
+              </Heading>{" "}
+            </Link>
+          </NextLink>
+
           <Text fontSize="md">(@{user.username})</Text>
           <Text fontSize="xs">- {formatDate(new Date(entry.createdAt))}</Text>
         </HStack>

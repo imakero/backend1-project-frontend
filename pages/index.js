@@ -1,24 +1,28 @@
-import { Box, Heading, HStack, Link } from "@chakra-ui/react"
-import NextLink from "next/link"
-import { useContext } from "react"
+import { Box, VStack } from "@chakra-ui/react"
+import { useEffect, useState } from "react"
+import Entry from "../components/Entry"
 import NewEntry from "../components/NewEntry"
-import { UserContext } from "../context/UserContext"
 
 export default function Home() {
-  const { user } = useContext(UserContext)
+  const [entries, setEntries] = useState([])
+
+  useEffect(() => {
+    const getEntries = async () => {
+      const res = await fetch("/api/entries")
+      const data = await res.json()
+      setEntries(data)
+    }
+    getEntries()
+  }, [])
 
   return (
     <Box>
-      <Heading>Home</Heading>
-      <NewEntry user={user} />
-      <HStack spacing={2}>
-        <NextLink href={"/signup"} passHref>
-          <Link>Sign up</Link>
-        </NextLink>
-        <NextLink href={"/login"} passHref>
-          <Link>Log in</Link>
-        </NextLink>
-      </HStack>
+      <VStack alignItems="start">
+        <NewEntry />
+        {entries.map((entry) => (
+          <Entry key={entry._id} entry={entry} user={entry.author} />
+        ))}
+      </VStack>
     </Box>
   )
 }

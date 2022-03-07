@@ -8,9 +8,13 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react"
-import { Field, Formik } from "formik"
+import { Field, Form, Formik } from "formik"
+import { useContext } from "react"
+import { UserContext } from "../context/UserContext"
 
-const NewEntry = ({ user }) => {
+const NewEntry = () => {
+  const { user, token } = useContext(UserContext)
+
   if (!user) {
     return null
   }
@@ -21,28 +25,43 @@ const NewEntry = ({ user }) => {
   const getOnChange = (onChange) => (event) =>
     event.target.value.length <= 140 ? onChange(event) : () => {}
 
+  const handleSubmit = async (values, { resetForm }) => {
+    const res = await fetch("/api/entries", {
+      method: "post",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: values.entryText,
+      }),
+    })
+    const data = await res.json()
+    resetForm()
+  }
+
   return (
-    <HStack
-      spacing={2}
-      align="start"
-      maxWidth={400}
-      p={4}
-      border="1px solid #e3e3e3"
-      margin="-1px"
+    <Formik
+      initialValues={{
+        entryText: "",
+      }}
+      onSubmit={handleSubmit}
     >
-      <Avatar size="md" name={displayName} src={src}></Avatar>
-      <Formik
-        initialValues={{
-          entryText: "",
-        }}
-        onSubmit={() => {}}
-      >
-        {({ isSubmitting, values }) => (
-          <VStack align="start" flexGrow={1}>
-            <Field name="entryText">
-              {({ field, form }) => {
-                console.log(field, form)
-                return (
+      {({ isSubmitting, values }) => (
+        <Form>
+          <HStack
+            spacing={2}
+            align="start"
+            width="100%"
+            maxWidth={500}
+            p={4}
+            border="1px solid #e3e3e3"
+            margin="-1px"
+          >
+            <Avatar size="md" name={displayName} src={src}></Avatar>
+            <VStack align="start" flexGrow={1}>
+              <Field name="entryText">
+                {({ field, form }) => (
                   <FormControl
                     isInvalid={form.errors.entryText && form.touched.entryText}
                   >
@@ -55,30 +74,30 @@ const NewEntry = ({ user }) => {
                     ></Textarea>
                     <FormErrorMessage>{form.errors.entryText}</FormErrorMessage>
                   </FormControl>
-                )
-              }}
-            </Field>
-            <HStack
-              justifyContent="space-between"
-              alignItems="start"
-              width="100%"
-            >
-              <Text fontSize="xs" display="block">
-                Character count {values.entryText.length}/140
-              </Text>
-              <Button
-                type="submit"
-                colorScheme="teal"
-                isLoading={isSubmitting}
-                disabled={isSubmitting}
+                )}
+              </Field>
+              <HStack
+                justifyContent="space-between"
+                alignItems="start"
+                width="100%"
               >
-                Post
-              </Button>
-            </HStack>
-          </VStack>
-        )}
-      </Formik>
-    </HStack>
+                <Text fontSize="xs" display="block">
+                  Character count {values.entryText.length}/140
+                </Text>
+                <Button
+                  type="submit"
+                  colorScheme="teal"
+                  isLoading={isSubmitting}
+                  disabled={isSubmitting}
+                >
+                  Post
+                </Button>
+              </HStack>
+            </VStack>
+          </HStack>
+        </Form>
+      )}
+    </Formik>
   )
 }
 

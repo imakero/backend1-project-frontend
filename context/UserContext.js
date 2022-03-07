@@ -11,7 +11,6 @@ export const UserProvider = ({ children }) => {
     const getUser = async () => {
       const res = await fetch(`/api/${jwt.decode(token).username}`)
       const data = await res.json()
-      console.log(data.user)
       setUser(data.user)
     }
 

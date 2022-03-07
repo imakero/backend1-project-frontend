@@ -2,6 +2,7 @@ import { Box, Heading } from "@chakra-ui/react"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import Entry from "../components/Entry"
+import ProfileHeader from "../components/ProfileHeader"
 
 export default function Profile() {
   const [user, setUser] = useState(null)
@@ -31,7 +32,7 @@ export default function Profile() {
 
   return (
     <Box>
-      <Heading>@{username}</Heading>
+      <ProfileHeader user={user} />
       {entries.map((entry) => (
         <Entry key={entry._id} entry={entry} user={user} />
       ))}
