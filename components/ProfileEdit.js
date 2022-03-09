@@ -34,8 +34,8 @@ const ProfileEdit = () => {
     <VStack alignItems="start" spacing={8}>
       <Formik
         initialValues={{
-          name: user.name,
-          email: user.email,
+          name: user?.name ? user.name : "",
+          email: user?.email ? user.email : "",
         }}
         onSubmit={async (values) => {
           const res = await fetch(`/api/${user.username}`, {

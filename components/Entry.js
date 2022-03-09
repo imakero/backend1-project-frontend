@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Heading,
-  HStack,
-  Link,
-  Text,
-  VStack,
-} from "@chakra-ui/react"
+import { Avatar, Heading, HStack, Link, Text, VStack } from "@chakra-ui/react"
 import { formatDate } from "../lib/utils"
 import NextLink from "next/link"
 
@@ -23,7 +15,7 @@ const Entry = ({ entry, user }) => {
       maxWidth={500}
       p={4}
       border="1px solid #e3e3e3"
-      margin="-1px"
+      marginTop="-1px"
     >
       <NextLink href={`/${username}`} passHref>
         <Link>

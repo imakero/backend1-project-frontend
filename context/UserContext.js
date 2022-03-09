@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState } from "react"
 import jwt from "jsonwebtoken"
+import { LOCAL_STORAGE_KEY } from "../lib/constants"
+import { isExpired } from "../lib/utils"
 
 export const UserContext = createContext()
 
@@ -14,15 +16,29 @@ export const UserProvider = ({ children }) => {
       setUser(data.user)
     }
 
+    const saveToken = () => localStorage.setItem(LOCAL_STORAGE_KEY, token)
+
     if (!token) {
-      return
+      const localToken = localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (localToken && !isExpired(jwt.decode(localToken).exp)) {
+        setToken(localToken)
+      } else {
+        return
+      }
     } else {
+      saveToken()
       getUser()
     }
   }, [token])
 
+  const logOut = () => {
+    localStorage.removeItem(LOCAL_STORAGE_KEY)
+    setUser(null)
+    setToken(null)
+  }
+
   return (
-    <UserContext.Provider value={{ user, token, setToken }}>
+    <UserContext.Provider value={{ user, token, setToken, logOut }}>
       {children}
     </UserContext.Provider>
   )

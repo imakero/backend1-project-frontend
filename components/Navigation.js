@@ -7,14 +7,22 @@ const Navigation = () => {
   const { user } = useContext(UserContext)
 
   return (
-    <HStack>
+    <HStack fontSize="lg" fontWeight="bold">
       <NextLink href={"/"} passHref>
         <Link>Home</Link>
       </NextLink>
+      <NextLink href={"/explore"} passHref>
+        <Link>Explore</Link>
+      </NextLink>
       {user ? (
-        <NextLink href={`/${user.username}`} passHref>
-          <Link>Profile</Link>
-        </NextLink>
+        <>
+          <NextLink href={`/${user.username}`} passHref>
+            <Link>Profile</Link>
+          </NextLink>
+          <NextLink href={`/logout`} passHref>
+            <Link>Log out</Link>
+          </NextLink>
+        </>
       ) : (
         <>
           <NextLink href={`/login`} passHref>
