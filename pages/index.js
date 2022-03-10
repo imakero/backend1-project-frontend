@@ -6,18 +6,20 @@ import { UserContext } from "../context/UserContext"
 
 export default function Home() {
   const [entries, setEntries] = useState([])
-  const { user } = useContext(UserContext)
+  const { user, token } = useContext(UserContext)
 
   useEffect(() => {
     const getEntries = async () => {
-      const res = await fetch(`/api/entries/${user.username}`)
+      const res = await fetch(`/api/entries/${user.username}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       const data = await res.json()
       setEntries(data)
     }
     if (user) {
       getEntries()
     }
-  }, [user])
+  }, [user, token])
 
   return (
     <Box>

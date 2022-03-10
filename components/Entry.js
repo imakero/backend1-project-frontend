@@ -1,6 +1,7 @@
 import { Avatar, Heading, HStack, Link, Text, VStack } from "@chakra-ui/react"
 import { formatDate } from "../lib/utils"
 import NextLink from "next/link"
+import LinkifyTags from "./LinkifyTags"
 
 const Entry = ({ entry, user }) => {
   const { profileImageUrl, username, name } = user
@@ -36,7 +37,9 @@ const Entry = ({ entry, user }) => {
           <Text fontSize="md">(@{user.username})</Text>
           <Text fontSize="xs">- {formatDate(new Date(entry.createdAt))}</Text>
         </HStack>
-        <Text fontSize="md">{entry.text}</Text>
+        <Text fontSize="md">
+          <LinkifyTags>{entry.text}</LinkifyTags>
+        </Text>
       </VStack>
     </HStack>
   )
