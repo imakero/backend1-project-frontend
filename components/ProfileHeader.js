@@ -19,26 +19,28 @@ import ProfileEdit from "./ProfileEdit"
 
 const ProfileHeader = ({ user }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { user: loggedInUser, token } = useContext(UserContext)
+  const { user: loggedInUser, token, fetchUser } = useContext(UserContext)
   const isLoggedInUser = loggedInUser && user.username === loggedInUser.username
   const profileImageUrl = user.profileImageUrl || ""
   const displayName = user.name || user.username
 
   const handleUnfollow = async () => {
-    const res = await fetch(`http://localhost:5000/${user.username}/unfollow`, {
+    const res = await fetch(`/api/${user.username}/unfollow`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
     })
+    fetchUser()
   }
 
   const handleFollow = async () => {
-    const res = await fetch(`http://localhost:5000/${user.username}/follow`, {
+    const res = await fetch(`/api/${user.username}/follow`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
     })
+    fetchUser()
   }
 
-  const followButton = loggedInUser.following.includes(user._id) ? (
+  const followButton = loggedInUser?.following.includes(user._id) ? (
     <Button onClick={handleUnfollow}>Unfollow</Button>
   ) : (
     <Button onClick={handleFollow}>Follow</Button>
@@ -79,7 +81,7 @@ const ProfileHeader = ({ user }) => {
               <Text color="gray.500">followers</Text>
             </HStack>
           </HStack>
-          {!isLoggedInUser && followButton}
+          {loggedInUser && !isLoggedInUser && followButton}
         </HStack>
       </VStack>
 

@@ -1,10 +1,12 @@
 import { Link } from "@chakra-ui/react"
 import NextLink from "next/link"
 
-const NavLink = ({ href, children }) => {
+const NavLink = ({ href, children, ...props }) => {
   return (
     <NextLink href={href} passHref>
-      <Link>{children}</Link>
+      <Link color="teal" {...props}>
+        {children}
+      </Link>
     </NextLink>
   )
 }

@@ -1,6 +1,7 @@
 import { Box, VStack } from "@chakra-ui/react"
 import { useContext, useEffect, useState } from "react"
 import Entry from "../components/Entry"
+import EntryList from "../components/EntryList"
 import NewEntry from "../components/NewEntry"
 import NewPosts from "../components/NewPosts"
 import { SocketContext } from "../context/SocketContext"
@@ -40,9 +41,7 @@ export default function Home() {
       <VStack alignItems="start" spacing={0}>
         <NewEntry />
         <NewPosts />
-        {entries.map((entry) => (
-          <Entry key={entry._id} entry={entry} user={entry.author} />
-        ))}
+        <EntryList entries={entries} />
       </VStack>
     </Box>
   )

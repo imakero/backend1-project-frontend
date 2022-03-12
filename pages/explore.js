@@ -1,6 +1,7 @@
 import { Box, VStack } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import Entry from "../components/Entry"
+import EntryList from "../components/EntryList"
 
 export default function Home() {
   const [entries, setEntries] = useState([])
@@ -17,9 +18,7 @@ export default function Home() {
   return (
     <Box>
       <VStack alignItems="start" spacing={0}>
-        {entries.map((entry) => (
-          <Entry key={entry._id} entry={entry} user={entry.author} />
-        ))}
+        <EntryList entries={entries} />
       </VStack>
     </Box>
   )

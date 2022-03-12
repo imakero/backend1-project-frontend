@@ -3,7 +3,8 @@ import { formatDate } from "../lib/utils"
 import NextLink from "next/link"
 import LinkifyTags from "./LinkifyTags"
 
-const Entry = ({ entry, user }) => {
+const Entry = ({ entry }) => {
+  const user = entry.author
   const { profileImageUrl, username, name } = user
   const src = profileImageUrl ? profileImageUrl : undefined
   const displayName = name || username

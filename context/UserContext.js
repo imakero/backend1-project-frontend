@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react"
+import { createContext, useCallback, useEffect, useState } from "react"
 import jwt from "jsonwebtoken"
 import { LOCAL_STORAGE_KEY } from "../lib/constants"
 import { isExpired } from "../lib/utils"
@@ -9,13 +9,13 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(null)
 
-  useEffect(() => {
-    const getUser = async () => {
-      const res = await fetch(`/api/${jwt.decode(token).username}`)
-      const data = await res.json()
-      setUser(data.user)
-    }
+  const fetchUser = useCallback(async () => {
+    const res = await fetch(`/api/${jwt.decode(token).username}`)
+    const data = await res.json()
+    setUser(data.user)
+  }, [setUser, token])
 
+  useEffect(() => {
     const saveToken = () => localStorage.setItem(LOCAL_STORAGE_KEY, token)
 
     if (!token) {
@@ -27,9 +27,9 @@ export const UserProvider = ({ children }) => {
       }
     } else {
       saveToken()
-      getUser()
+      fetchUser()
     }
-  }, [token])
+  }, [token, fetchUser])
 
   const logOut = () => {
     localStorage.removeItem(LOCAL_STORAGE_KEY)
@@ -38,7 +38,7 @@ export const UserProvider = ({ children }) => {
   }
 
   return (
-    <UserContext.Provider value={{ user, token, setToken, logOut }}>
+    <UserContext.Provider value={{ user, token, setToken, logOut, fetchUser }}>
       {children}
     </UserContext.Provider>
   )
