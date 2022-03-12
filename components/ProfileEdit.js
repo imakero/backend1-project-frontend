@@ -11,23 +11,12 @@ import { Field, Form, Formik } from "formik"
 import { useContext, useState } from "react"
 import { UserContext } from "../context/UserContext"
 
-const ProfileEdit = () => {
+const ProfileEdit = ({ onClose, refresh }) => {
   const { token, user } = useContext(UserContext)
   const [profileImageFile, setProfileImageFile] = useState("")
 
   const handleSubmitImage = async (event) => {
     event.preventDefault()
-    const formData = new FormData()
-
-    formData.append("profileImage", profileImageFile)
-
-    await fetch(`api/${user.username}/profile-image`, {
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      method: "POST",
-    })
   }
 
   return (
@@ -49,6 +38,20 @@ const ProfileEdit = () => {
               email: values.email,
             }),
           })
+
+          const formData = new FormData()
+          formData.append("profileImage", profileImageFile)
+
+          await fetch(`api/${user.username}/profile-image`, {
+            body: formData,
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            method: "POST",
+          })
+
+          onClose()
+          refresh()
         }}
       >
         {({ isSubmitting }) => (
@@ -81,6 +84,18 @@ const ProfileEdit = () => {
                   </FormControl>
                 )}
               </Field>
+              <FormControl>
+                <FormLabel htmlFor="profile-image">
+                  Upload a profile image
+                </FormLabel>
+                <Input
+                  onChange={(event) =>
+                    setProfileImageFile(event.target.files[0])
+                  }
+                  id="profile-image"
+                  type="file"
+                />
+              </FormControl>
               <Button
                 type="submit"
                 isLoading={isSubmitting}
@@ -93,17 +108,7 @@ const ProfileEdit = () => {
         )}
       </Formik>
 
-      <form onSubmit={handleSubmitImage}>
-        <FormControl>
-          <FormLabel htmlFor="profile-image">Upload a profile image</FormLabel>
-          <Input
-            onChange={(event) => setProfileImageFile(event.target.files[0])}
-            id="profile-image"
-            type="file"
-          />
-        </FormControl>
-        <Button type="submit">Upload</Button>
-      </form>
+      <form onSubmit={handleSubmitImage}></form>
     </VStack>
   )
 }

@@ -3,6 +3,7 @@ import {
   Button,
   Heading,
   HStack,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -17,7 +18,7 @@ import { useContext } from "react"
 import { UserContext } from "../context/UserContext"
 import ProfileEdit from "./ProfileEdit"
 
-const ProfileHeader = ({ user }) => {
+const ProfileHeader = ({ user, refresh }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { user: loggedInUser, token, fetchUser } = useContext(UserContext)
   const isLoggedInUser = loggedInUser && user.username === loggedInUser.username
@@ -30,6 +31,7 @@ const ProfileHeader = ({ user }) => {
       headers: { Authorization: `Bearer ${token}` },
     })
     fetchUser()
+    refresh()
   }
 
   const handleFollow = async () => {
@@ -38,6 +40,7 @@ const ProfileHeader = ({ user }) => {
       headers: { Authorization: `Bearer ${token}` },
     })
     fetchUser()
+    refresh()
   }
 
   const followButton = loggedInUser?.following.includes(user._id) ? (
@@ -70,6 +73,11 @@ const ProfileHeader = ({ user }) => {
           {displayName}
         </Heading>
         <Text size="sm">@{user.username}</Text>
+        {user.email && (
+          <Link size="md" href={`mailto:${user.email}`}>
+            {user.email}
+          </Link>
+        )}
         <HStack justifyContent="space-between" w="100%">
           <HStack spacing={4}>
             <HStack>
@@ -91,7 +99,7 @@ const ProfileHeader = ({ user }) => {
           <ModalHeader>Edit profile</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <ProfileEdit />
+            <ProfileEdit onClose={onClose} refresh={refresh} />
           </ModalBody>
         </ModalContent>
       </Modal>

@@ -9,7 +9,7 @@ const Logout = () => {
   useEffect(() => {
     logOut()
     router.push("/")
-  }, [])
+  }, [logOut, router])
 
   return <></>
 }

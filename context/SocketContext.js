@@ -8,7 +8,6 @@ export const SocketProvider = ({ children }) => {
   const socketRef = useRef(null)
   const { user } = useContext(UserContext)
   const [newPosts, setNewPosts] = useState([])
-  const [refresh, setRefresh] = useState(false)
 
   useEffect(() => {
     socketRef.current = socketClient("http://localhost:5000")
@@ -30,21 +29,8 @@ export const SocketProvider = ({ children }) => {
     return () => socketRef.current.off("newPost")
   }, [user])
 
-  useEffect(() => {
-    if (!newPosts.length) {
-      setRefresh(false)
-    }
-  }, [newPosts])
-
-  const loadNewPosts = () => {
-    setRefresh(true)
-    setNewPosts([])
-  }
-
   return (
-    <SocketContext.Provider
-      value={{ newPosts, setNewPosts, loadNewPosts, refresh }}
-    >
+    <SocketContext.Provider value={{ newPosts, setNewPosts }}>
       {children}
     </SocketContext.Provider>
   )

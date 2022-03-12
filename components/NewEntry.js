@@ -13,7 +13,7 @@ import { Field, Form, Formik } from "formik"
 import { useContext } from "react"
 import { UserContext } from "../context/UserContext"
 
-const NewEntry = () => {
+const NewEntry = ({ refresh }) => {
   const { user, token } = useContext(UserContext)
 
   if (!user) {
@@ -37,7 +37,8 @@ const NewEntry = () => {
         text: values.entryText,
       }),
     })
-    const data = await res.json()
+    await res.json()
+    refresh()
     resetForm()
   }
 

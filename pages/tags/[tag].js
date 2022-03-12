@@ -1,31 +1,21 @@
 import { Box, Heading, VStack } from "@chakra-ui/react"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
-import Entry from "../../components/Entry"
 import EntryList from "../../components/EntryList"
+import useApi from "../../hooks/useApi"
 
 export default function Tag() {
-  const [entries, setEntries] = useState([])
   const router = useRouter()
   const { tag } = router.query
-
-  useEffect(() => {
-    const getEntries = async () => {
-      const res = await fetch(`/api/tags/${tag}`)
-      const data = await res.json()
-      setEntries(data)
-    }
-    if (tag) {
-      getEntries()
-    }
-  }, [tag])
+  const {
+    data: entries = [],
+    refresh,
+    loading,
+  } = useApi(`/tags/${tag}`, null, !tag)
 
   return (
     <Box>
       <Heading>#{tag}</Heading>
-      <VStack alignItems="start" spacing={0}>
-        <EntryList entries={entries} />
-      </VStack>
+      {!loading && <EntryList entries={entries} />}
     </Box>
   )
 }

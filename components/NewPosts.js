@@ -1,11 +1,9 @@
 import { Button, HStack } from "@chakra-ui/react"
-import { useRouter } from "next/router"
 import { useContext } from "react"
 import { SocketContext } from "../context/SocketContext"
 
-const NewPosts = () => {
-  const { newPosts, loadNewPosts } = useContext(SocketContext)
-  const router = useRouter()
+const NewPosts = ({ refresh }) => {
+  const { newPosts, setNewPosts } = useContext(SocketContext)
 
   if (!newPosts.length) {
     return null
@@ -27,7 +25,10 @@ const NewPosts = () => {
         height="100%"
         p={4}
         borderRadius={0}
-        onClick={loadNewPosts}
+        onClick={() => {
+          refresh()
+          setNewPosts([])
+        }}
       >
         Show {newPosts.length} new posts
       </Button>

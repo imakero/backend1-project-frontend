@@ -1,39 +1,21 @@
-import { Box, Heading } from "@chakra-ui/react"
+import { Box } from "@chakra-ui/react"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
 import EntryList from "../components/EntryList"
 import ProfileHeader from "../components/ProfileHeader"
+import useApi from "../hooks/useApi"
 
 export default function Profile() {
-  const [user, setUser] = useState(null)
-  const [entries, setEntries] = useState([])
   const router = useRouter()
   const { username } = router.query
-
-  useEffect(() => {
-    const getUserData = async () => {
-      const res = await fetch(`/api/${username}`)
-      const data = await res.json()
-      setUser(data.user)
-      setEntries(data.entries)
-    }
-    if (username) {
-      getUserData()
-    }
-  }, [username])
-
-  if (!user) {
-    return (
-      <Box>
-        <Heading>Loading...</Heading>
-      </Box>
-    )
-  }
+  const { data, refresh } = useApi(`/${username}`, null, !username)
+  const { user, entries } = data ? data : { user: null, entries: [] }
 
   return (
-    <Box>
-      <ProfileHeader user={user} />
-      <EntryList entries={entries} />
-    </Box>
+    user && (
+      <Box>
+        <ProfileHeader user={user} refresh={refresh} />
+        <EntryList entries={entries} />
+      </Box>
+    )
   )
 }

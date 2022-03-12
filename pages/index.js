@@ -1,46 +1,36 @@
 import { Box, VStack } from "@chakra-ui/react"
-import { useContext, useEffect, useState } from "react"
-import Entry from "../components/Entry"
+import { useContext, useEffect, useRef, useState } from "react"
 import EntryList from "../components/EntryList"
 import NewEntry from "../components/NewEntry"
 import NewPosts from "../components/NewPosts"
 import { SocketContext } from "../context/SocketContext"
 import { UserContext } from "../context/UserContext"
+import useApi from "../hooks/useApi"
 
 export default function Home() {
-  const [entries, setEntries] = useState([])
   const { user, token } = useContext(UserContext)
-  const { refresh, setNewPosts } = useContext(SocketContext)
-  const [loading, setLoading] = useState(true)
+  const { setNewPosts } = useContext(SocketContext)
+  const options = useRef(null)
+  const route = useRef("/entries")
+
+  const { data: entries = [], refresh } = useApi(route.current, options.current)
 
   useEffect(() => {
-    const getEntries = async (user) => {
-      let url = "/api/entries"
-      let options = {}
-      if (user) {
-        url = `/api/entries/${user.username}`
-        options = { headers: { Authorization: `Bearer ${token}` } }
-        console.log(url, options)
-      }
-      const res = await fetch(url, options)
-      const data = await res.json()
-      setEntries(data)
-    }
-    getEntries()
-  }, [user, token, refresh])
+    setNewPosts([])
+  }, [setNewPosts])
 
   useEffect(() => {
-    if (loading) {
-      setNewPosts([])
-      setLoading(false)
-    }
-  }, [loading, setNewPosts])
+    options.current = user
+      ? { headers: { Authorization: `Bearer ${token}` } }
+      : null
+    route.current = user ? `/entries/${user.username}` : "/entries"
+  }, [user, token])
 
   return (
     <Box>
       <VStack alignItems="start" spacing={0}>
-        <NewEntry />
-        <NewPosts />
+        <NewEntry refresh={refresh} />
+        <NewPosts refresh={refresh} />
         <EntryList entries={entries} />
       </VStack>
     </Box>
