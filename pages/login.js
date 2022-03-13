@@ -12,6 +12,7 @@ import { useRouter } from "next/router"
 import { useContext } from "react"
 import { UserContext } from "../context/UserContext"
 import jwt from "jsonwebtoken"
+import ErrorMessage from "../components/ErrorMessage"
 
 export default function Home() {
   const router = useRouter()
@@ -25,24 +26,28 @@ export default function Home() {
           username: "",
           password: "",
         }}
-        onSubmit={async (values) => {
-          const res = await fetch("/api/auth/tokens", {
-            method: "post",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username: values.username,
-              password: values.password,
-            }),
-          })
-          const data = await res.json()
-          setToken(data.token)
-          const { username } = jwt.decode(data.token)
-          router.push(`/${username}`)
+        onSubmit={async (values, { setStatus }) => {
+          try {
+            const res = await fetch("/api/auth/tokens", {
+              method: "post",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                username: values.username,
+                password: values.password,
+              }),
+            })
+            const data = await res.json()
+            setToken(data.token)
+            const { username } = jwt.decode(data.token)
+            router.push(`/${username}`)
+          } catch (error) {
+            setStatus("Incorrect username or password")
+          }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, status }) => (
           <Form>
             <Field name="username">
               {({ field, form }) => (
@@ -71,6 +76,7 @@ export default function Home() {
                 </FormControl>
               )}
             </Field>
+            <ErrorMessage>{status}</ErrorMessage>
 
             <Button
               type="submit"

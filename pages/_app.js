@@ -1,4 +1,4 @@
-import { Box, ChakraProvider } from "@chakra-ui/react"
+import { Box, ChakraProvider, VStack } from "@chakra-ui/react"
 import { UserProvider } from "../context/UserContext"
 import Navigation from "../components/Navigation"
 import { SocketProvider } from "../context/SocketContext"
@@ -8,10 +8,12 @@ function MyApp({ Component, pageProps }) {
     <UserProvider>
       <SocketProvider>
         <ChakraProvider>
-          <Box m={4}>
-            <Navigation />
-            <Component {...pageProps} />
-          </Box>
+          <VStack>
+            <Box m={4} width={500}>
+              <Navigation />
+              <Component {...pageProps} />
+            </Box>
+          </VStack>
         </ChakraProvider>
       </SocketProvider>
     </UserProvider>

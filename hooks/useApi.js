@@ -14,6 +14,7 @@ const useApi = (endpoint, options, ignore) => {
       const res = await fetch(url, options)
       setData(await res.json())
     } catch (error) {
+      console.error(error)
       setError(error)
     } finally {
       setLoading(false)

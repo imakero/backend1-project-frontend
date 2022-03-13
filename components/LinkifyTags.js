@@ -5,7 +5,7 @@ import NavLink from "./NavLink"
 const LinkifyTags = ({ children }) => {
   children = [...children.split(HASHTAGS)].map((str, index) =>
     index % 2 === 1 ? (
-      <NavLink key={index} href={`/tags/${str}`} color="teal">
+      <NavLink key={index} href={`/tags/${str.toLowerCase()}`} color="teal">
         #{str}
       </NavLink>
     ) : (

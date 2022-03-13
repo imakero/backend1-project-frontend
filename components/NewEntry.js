@@ -12,6 +12,7 @@ import {
 import { Field, Form, Formik } from "formik"
 import { useContext } from "react"
 import { UserContext } from "../context/UserContext"
+import { getHeaders } from "../lib/utils"
 
 const NewEntry = ({ refresh }) => {
   const { user, token } = useContext(UserContext)
@@ -26,20 +27,22 @@ const NewEntry = ({ refresh }) => {
   const getOnChange = (onChange) => (event) =>
     event.target.value.length <= 140 ? onChange(event) : () => {}
 
-  const handleSubmit = async (values, { resetForm }) => {
-    const res = await fetch("/api/entries", {
-      method: "post",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text: values.entryText,
-      }),
-    })
-    await res.json()
-    refresh()
-    resetForm()
+  const handleSubmit = async (values, { resetForm, setStatus }) => {
+    try {
+      const res = await fetch("/api/entries", {
+        method: "post",
+        ...getHeaders(token),
+        body: JSON.stringify({
+          text: values.entryText,
+        }),
+      })
+      await res.json()
+      refresh()
+      resetForm()
+    } catch (error) {
+      console.log(error)
+      setStatus("There was a problem submitting the entry, please try again.")
+    }
   }
 
   return (
@@ -50,7 +53,7 @@ const NewEntry = ({ refresh }) => {
         }}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting, values }) => (
+        {({ isSubmitting, values, status }) => (
           <Form>
             <HStack
               spacing={2}
@@ -62,6 +65,9 @@ const NewEntry = ({ refresh }) => {
             >
               <Avatar size="md" name={displayName} src={src}></Avatar>
               <VStack align="start" flexGrow={1}>
+                <Text color="red" fontSize="sm">
+                  {status}
+                </Text>
                 <Field name="entryText">
                   {({ field, form }) => (
                     <FormControl

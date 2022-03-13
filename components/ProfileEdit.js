@@ -10,9 +10,10 @@ import {
 import { Field, Form, Formik } from "formik"
 import { useContext, useState } from "react"
 import { UserContext } from "../context/UserContext"
+import ErrorMessage from "./ErrorMessage"
 
 const ProfileEdit = ({ onClose, refresh }) => {
-  const { token, user } = useContext(UserContext)
+  const { token, user, fetchUser } = useContext(UserContext)
   const [profileImageFile, setProfileImageFile] = useState("")
 
   const handleSubmitImage = async (event) => {
@@ -26,37 +27,49 @@ const ProfileEdit = ({ onClose, refresh }) => {
           name: user?.name ? user.name : "",
           email: user?.email ? user.email : "",
         }}
-        onSubmit={async (values) => {
-          const res = await fetch(`/api/${user.username}`, {
-            method: "post",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              name: values.name,
-              email: values.email,
-            }),
-          })
+        onSubmit={async (values, { setStatus }) => {
+          try {
+            const res = await fetch(`/api/${user.username}`, {
+              method: "post",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                name: values.name,
+                email: values.email,
+              }),
+            })
 
-          const formData = new FormData()
-          formData.append("profileImage", profileImageFile)
+            if (profileImageFile) {
+              const formData = new FormData()
+              formData.append("profileImage", profileImageFile)
 
-          await fetch(`api/${user.username}/profile-image`, {
-            body: formData,
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            method: "POST",
-          })
-
-          onClose()
-          refresh()
+              await fetch(`api/${user.username}/profile-image`, {
+                body: formData,
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+                method: "POST",
+              })
+            }
+            onClose()
+            refresh()
+            fetchUser()
+            console.log("test")
+          } catch (error) {
+            console.log("asdfasdfölaskdjfalskdf")
+            console.error(error)
+            setStatus(
+              "There was an error submitting the form, please try again."
+            )
+          }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, status }) => (
           <Form>
             <VStack spacing={2} align="start">
+              <ErrorMessage>{status}</ErrorMessage>
               <Field name="name">
                 {({ field, form }) => (
                   <FormControl
