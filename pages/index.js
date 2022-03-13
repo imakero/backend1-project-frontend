@@ -8,12 +8,16 @@ import { UserContext } from "../context/UserContext"
 import useApi from "../hooks/useApi"
 
 export default function Home() {
-  const { user, token } = useContext(UserContext)
+  const { user, token, ready } = useContext(UserContext)
   const { setNewPosts } = useContext(SocketContext)
   const options = useRef(null)
   const route = useRef("/entries")
-
-  const { data: entries = [], refresh } = useApi(route.current, options.current)
+  const [loading, setLoading] = useState(true)
+  const { data: entries = [], refresh } = useApi(
+    route.current,
+    options.current,
+    !ready || loading
+  )
 
   useEffect(() => {
     setNewPosts([])
@@ -24,6 +28,7 @@ export default function Home() {
       ? { headers: { Authorization: `Bearer ${token}` } }
       : null
     route.current = user ? `/entries/${user.username}` : "/entries"
+    setLoading(false)
   }, [user, token])
 
   return (

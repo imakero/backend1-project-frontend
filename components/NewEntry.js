@@ -40,7 +40,7 @@ const NewEntry = ({ refresh }) => {
       refresh()
       resetForm()
     } catch (error) {
-      console.log(error)
+      console.error(error)
       setStatus("There was a problem submitting the entry, please try again.")
     }
   }

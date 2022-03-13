@@ -56,10 +56,7 @@ const ProfileEdit = ({ onClose, refresh }) => {
             onClose()
             refresh()
             fetchUser()
-            console.log("test")
           } catch (error) {
-            console.log("asdfasdfölaskdjfalskdf")
-            console.error(error)
             setStatus(
               "There was an error submitting the form, please try again."
             )
