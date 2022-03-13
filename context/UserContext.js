@@ -25,6 +25,8 @@ export const UserProvider = ({ children }) => {
       const localToken = localStorage.getItem(LOCAL_STORAGE_KEY)
       if (localToken && !isExpired(jwt.decode(localToken).exp)) {
         setToken(localToken)
+      } else if (!localToken) {
+        setReady(true)
       } else {
         return
       }
